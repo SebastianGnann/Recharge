@@ -141,6 +141,12 @@ df = df.dropna()
 df_FLUXCOM = df
 print("Finished FLUXCOM.")
 
+# Cuthbert
+data_path = "C:/Users/gnann/Documents/PYTHON/Recharge/results/"
+df = pd.read_csv(data_path + "green-roofs_deep_drainage.csv")
+df_Cuthbert = df
+print("Finished Cuthbert.")
+
 def Budyko_curve(aridity, **kwargs):
     # Budyko, M.I., Miller, D.H. and Miller, D.H., 1974. Climate and life (Vol. 508). New York: Academic press.
     return np.sqrt(aridity * np.tanh(1 / aridity) * (1 - np.exp(-aridity)));
@@ -155,27 +161,29 @@ def Berghuijs_recharge_curve(aridity):
 print("Several fluxes Budyko")
 fig = plt.figure(figsize=(6, 4), constrained_layout=True)
 axes = plt.axes()
-#im = axes.scatter(df_FLUXCOM["aridity_netrad_gswp3"], 1-df_FLUXCOM["LE"]/df_FLUXCOM["pr_gswp3"], s=1, c="#fb9a99", alpha=0.25, lw=0)
+#im = axes.scatter(df_FLUXCOM["aridity_netrad_gswp3"], 1-df_FLUXCOM["LE"]/df_FLUXCOM["pr_gswp3"], s=1, c="#F7C188", alpha=0.25, lw=0)
 #im = axes.scatter(df_Caravan["aridity"], (df_Caravan["Q_mean"]/df_Caravan["p_mean"]), s=2.5, c="#a6cee3", alpha=0.25, lw=0)
 #im = axes.scatter(df_Caravan["aridity"], ((df_Caravan["BFI"]*df_Caravan["Q_mean"])/df_Caravan["p_mean"]), s=2.5, c="#1f78b4", alpha=0.25, lw=0)
-#im = axes.scatter(df_CAMELS["aridity"], df_CAMELS["runoff_ratio"], s=2.5, c="#a6cee3", alpha=0.25, lw=0)
-#im = axes.scatter(df_CAMELS["aridity"], (df_CAMELS["BFI"]*df_CAMELS["runoff_ratio"]), s=2.5, c="#1f78b4", alpha=0.25, lw=0)
+im = axes.scatter(df_CAMELS["aridity"], df_CAMELS["runoff_ratio"], s=2.5, c="#a6cee3", alpha=0.25, lw=0)
+im = axes.scatter(df_CAMELS["aridity"], (df_CAMELS["BFI"]*df_CAMELS["runoff_ratio"]), s=2.5, c="#1f78b4", alpha=0.25, lw=0)
 #im = axes.scatter(df_CAMELS["aridity"], (1-(1-df_CAMELS["BFI"])*df_CAMELS["runoff_ratio"]), s=2.5, c="#a35a4e", alpha=0.25, lw=0)
-#im = axes.scatter(df_Moeck["aridity_netrad_gswp3"], (df_Moeck["Groundwater recharge [mm/y]"]/df_Moeck["pr_gswp3"]), s=2.5, c="#b2df8a", alpha=0.25, lw=0)
-#im = axes.scatter(df_MacDonald["aridity_netrad_gswp3"], (df_MacDonald["Recharge_mmpa"]/df_MacDonald["pr_gswp3"]), s=2.5, c="#33a02c", alpha=0.25, lw=0)
+im = axes.scatter(df_Moeck["aridity_netrad_gswp3"], (df_Moeck["Groundwater recharge [mm/y]"]/df_Moeck["pr_gswp3"]), s=2.5, c="#b2df8a", alpha=0.25, lw=0)
+im = axes.scatter(df_MacDonald["aridity_netrad_gswp3"], (df_MacDonald["Recharge_mmpa"]/df_MacDonald["pr_gswp3"]), s=2.5, c="#33a02c", alpha=0.25, lw=0)
 #im = axes.scatter(df_FLUXNET["Aridity"], 1-df_FLUXNET["LATENT HEAT FLUX"]/df_FLUXNET["PRECIPITATION"], s=2.5, c="#f85656", alpha=0.25, lw=0)
-plotting_fcts.plot_lines_group(df_FLUXCOM["aridity_netrad_gswp3"], df_FLUXCOM["LE"]/df_FLUXCOM["pr_gswp3"], "#fb9a99", n=11, label='ET')
+plotting_fcts.plot_lines_group(df_FLUXCOM["aridity_netrad_gswp3"], 1-df_FLUXCOM["LE"]/df_FLUXCOM["pr_gswp3"], "#F7C188", n=11, label='ET')
 #plotting_fcts.plot_lines_group(df_Caravan["aridity"], (df_Caravan["Q_mean"]/df_Caravan["p_mean"]), "#a6cee3", n=11, label='Qtot')
 #plotting_fcts.plot_lines_group(df_Caravan["aridity"], ((df_Caravan["BFI"]*df_Caravan["Q_mean"])/df_Caravan["p_mean"]), "#1f78b4", n=11, label='Qb')
 plotting_fcts.plot_lines_group(df_CAMELS["aridity"], df_CAMELS["runoff_ratio"], "#a6cee3", n=11, label='Qtot')
 plotting_fcts.plot_lines_group(df_CAMELS["aridity"], (df_CAMELS["BFI"]*df_CAMELS["runoff_ratio"]), "#1f78b4", n=11, label='Qb')
-plotting_fcts.plot_lines_group(df_CAMELS["aridity"], (1-(1-df_CAMELS["BFI"])*df_CAMELS["runoff_ratio"]), "#a35a4e", n=11, label='P-Qf')
+#plotting_fcts.plot_lines_group(df_CAMELS["aridity"], (1-(1-df_CAMELS["BFI"])*df_CAMELS["runoff_ratio"]), "#CEA97C", n=11, label='P-Qf')
 plotting_fcts.plot_lines_group(df_Moeck["aridity_netrad_gswp3"], df_Moeck["Groundwater recharge [mm/y]"]/df_Moeck["pr_gswp3"], "#b2df8a", n=11, label='GWR1')
 plotting_fcts.plot_lines_group(df_MacDonald["aridity_netrad_gswp3"], df_MacDonald["Recharge_mmpa"]/df_MacDonald["pr_gswp3"], "#33a02c", n=6, label='GWR2')
 #plotting_fcts.plot_lines_group(df_FLUXNET["Aridity"], 1-df_FLUXNET["LATENT HEAT FLUX"]/df_FLUXNET["PRECIPITATION"], "#f85656", n=6, label='1-ET2')
+#plotting_fcts.plot_lines_group(df_Cuthbert["PET"]/df_Cuthbert["P"], df_Cuthbert["AET"]/df_Cuthbert["P"], "#c26900", n=11, label='ET/P')
+plotting_fcts.plot_lines_group(df_Cuthbert["PET"]/df_Cuthbert["P"], df_Cuthbert["D(=P-AET)"]/df_Cuthbert["P"], "#A496CF", n=11, label='D/P')
 im = axes.plot(np.linspace(0.1,10,100), 1-Budyko_curve(np.linspace(0.1,10,100)), "--", c="black", alpha=0.75)
-im = axes.plot(np.linspace(0.1,10,100), Berghuijs_recharge_curve(np.linspace(0.1,10,100)), "--", c="black", alpha=0.75)
 im = axes.plot(np.linspace(0.1,10,100), 1-Budyko_curve(np.linspace(0.1,10,100)), "--", c="#a6cee3", alpha=0.75, label="Budyko")
+im = axes.plot(np.linspace(0.1,10,100), Berghuijs_recharge_curve(np.linspace(0.1,10,100)), "--", c="black", alpha=0.75)
 im = axes.plot(np.linspace(0.1,10,100), Berghuijs_recharge_curve(np.linspace(0.1,10,100)), "--", c="#b2df8a", alpha=0.75, label="Berghuijs")
 axes.set_xlabel("PET / P [-]")
 axes.set_ylabel("Flux / P [-]")
@@ -197,6 +205,7 @@ im = axes.scatter(df_Moeck["aridity_netrad_gswp3"], (df_Moeck["Groundwater recha
 im = axes.scatter(df_MacDonald["aridity_netrad_gswp3"], (df_MacDonald["Recharge_mmpa"]/df_MacDonald["pr_gswp3"]), s=2.5, c="#33a02c", alpha=0.25, lw=0)
 plotting_fcts.plot_lines_group(df_Moeck["aridity_netrad_gswp3"], df_Moeck["Groundwater recharge [mm/y]"]/df_Moeck["pr_gswp3"], "#b2df8a", n=11, label='GWR1')
 plotting_fcts.plot_lines_group(df_MacDonald["aridity_netrad_gswp3"], df_MacDonald["Recharge_mmpa"]/df_MacDonald["pr_gswp3"], "#33a02c", n=6, label='GWR2')
+plotting_fcts.plot_lines_group(df_Cuthbert["PET"]/df_Cuthbert["P"], df_Cuthbert["D(=P-AET)"]/df_Cuthbert["P"], "#A496CF", n=11, label='D/P')
 m = axes.plot(np.linspace(0.1,10,100), Berghuijs_recharge_curve(np.linspace(0.1,10,100)), "--", c="black", alpha=0.75)
 im = axes.plot(np.linspace(0.1,10,100), Berghuijs_recharge_curve(np.linspace(0.1,10,100)), "--", c="#b2df8a", alpha=0.75, label="Berghuijs")
 axes.set_xlabel("PET / P [-]")
@@ -209,7 +218,6 @@ axes.set_xscale('log')
 plotting_fcts.plot_grid(axes)
 fig.savefig(figures_path + "Budyko_recharge.png", dpi=600, bbox_inches='tight')
 plt.close()
-
 
 # plot P-R plot
 print("Precipitation Recharge")
@@ -227,13 +235,31 @@ axes.grid()
 fig.savefig(figures_path + "precipitation_recharge.png", dpi=600, bbox_inches='tight')
 plt.close()
 
+# plot Budyko plot using Cuthbert potential drainage data
+print("Cuthbert Potential Drainage")
+fig = plt.figure(figsize=(6, 4), constrained_layout=True)
+axes = plt.axes()
+im = axes.scatter(df_Cuthbert["PET"]/df_Cuthbert["P"], df_Cuthbert["AET"]/df_Cuthbert["P"], s=0.5, c="#7B654A", alpha=0.1, lw=0)
+plotting_fcts.plot_lines_group(df_Cuthbert["PET"]/df_Cuthbert["P"], df_Cuthbert["AET"]/df_Cuthbert["P"], "#7B654A", n=11, label='ET/P')
+im = axes.scatter(df_Cuthbert["PET"]/df_Cuthbert["P"], df_Cuthbert["D(=P-AET)"]/df_Cuthbert["P"], s=0.5, c="#A496CF", alpha=0.1, lw=0)
+plotting_fcts.plot_lines_group(df_Cuthbert["PET"]/df_Cuthbert["P"], df_Cuthbert["D(=P-AET)"]/df_Cuthbert["P"], "#A496CF", n=11, label='D/P')
+axes.set_xlabel("PET / P [-]")
+axes.set_ylabel("Flux / P [-]")
+axes.set_xlim([0.25, 10])
+#axes.set_xlim([0, 5])
+axes.set_ylim([-0.1, 1.2])
+axes.legend(loc='center right', bbox_to_anchor=(1.25, 0.5))
+axes.set_xscale('log')
+axes.grid()
+fig.savefig(figures_path + "Budyko_Cuthbert.png", dpi=600, bbox_inches='tight')
+plt.close()
 
 # plot standard Budyko plot
 print("Baseflow Budyko")
 fig = plt.figure(figsize=(6, 4), constrained_layout=True)
 axes = plt.axes()
 im = axes.scatter(df_CAMELS["aridity"], (df_CAMELS["BFI"]*df_CAMELS["runoff_ratio"]), s=2.5, c="#1f78b4", alpha=0.5, lw=0)
-plotting_fcts.plot_lines_group(df_Caravan["aridity"], ((df_Caravan["BFI"]*df_Caravan["Q_mean"])/df_Caravan["p_mean"]), "#1f78b4", n=11, label='Qb')
+plotting_fcts.plot_lines_group(df_CAMELS["aridity"], (df_CAMELS["BFI"]*df_CAMELS["runoff_ratio"]), "#1f78b4", n=11, label='Qb')
 axes.set_xlabel("PET / P [-]")
 axes.set_ylabel("Flux / P [-]")
 axes.set_xlim([0.25, 10])
@@ -245,8 +271,7 @@ axes.grid()
 fig.savefig(figures_path + "Budyko_baseflow.png", dpi=600, bbox_inches='tight')
 plt.close()
 
-
-# plot standard Budyko plot
+# plot standard Budyko plot for baseflow
 print("Baseflow Budyko")
 fig = plt.figure(figsize=(6, 4), constrained_layout=True)
 axes = plt.axes()
@@ -264,7 +289,6 @@ axes.grid()
 axes.set_xscale('log')
 fig.savefig(figures_path + "Budyko_comparison.png", dpi=600, bbox_inches='tight')
 plt.close()
-
 
 #plotting_fcts.plot_Budyko_limits(df_Caravan["aridity_netrad"], df_Caravan["streamflow"])
 #axes.plot(np.linspace(0, 1, 100), np.linspace(1, 0, 100), '--', c='gray')
