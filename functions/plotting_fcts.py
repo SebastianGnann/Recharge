@@ -20,7 +20,7 @@ def plot_Budyko_limits(x, y, **kwargs):
     ax.plot(np.linspace(1, lim, 100), np.linspace(1, 1, 100), '--', c='gray')
 
 
-def plot_lines_group(x, y, color, n=11, label='', **kwargs):
+def plot_lines_group(x, y, color, n=11, label='', statistic='mean', **kwargs):
 
     import matplotlib.patheffects as mpe
     outline = mpe.withStroke(linewidth=4, foreground='white', alpha=0.75)
@@ -49,7 +49,13 @@ def plot_lines_group(x, y, color, n=11, label='', **kwargs):
     ax = plt.gca()
     #ax.errorbar(bin_median, median_stat.statistic, xerr=None, yerr=asymmetric_error, capsize=2,
     #            fmt='o', ms=4, elinewidth=1, c='black', ecolor='black', mec='black', mfc=color, alpha=0.9, label=corr_str)
-    ax.plot(bin_median, median_stat.statistic, color=color, path_effects=[outline], label=label)
+    if statistic == 'median':
+        ax.plot(bin_median, median_stat.statistic, color=color, path_effects=[outline], label=label)
+    elif statistic == 'mean':
+        ax.plot(bin_median, mean_stat.statistic, color=color, path_effects=[outline], label=label)
+    else:
+        print('incorrect statistic - using median')
+        ax.plot(bin_median, median_stat.statistic, color=color, path_effects=[outline], label=label)
     #ax.fill_between(bin_median, p_25_stat.statistic, p_75_stat.statistic, facecolor=color, alpha=0.1)
     #ax.fill_between(bin_median, p_05_stat.statistic, p_95_stat.statistic, facecolor=color, alpha=0.1)
 
