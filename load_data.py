@@ -46,7 +46,7 @@ for c in camels_list:
 # load timeseries
 df_timeseries = pd.DataFrame(columns=["date", "total_precipitation_sum", "potential_evaporation_sum", "streamflow"])
 for c in camels_list:
-
+    # todo: FIX CODE, see other repo
     for id in df_attributes["gauge_id"]:
         #print(id)
         df_tmp = pd.read_csv(data_path + "timeseries/csv/" + c + "/" + id + ".csv", sep=',')
@@ -71,7 +71,7 @@ df_attributes["aridity_hydroatlas"] = 1/(df_attributes["ari_ix_sav"]/100)
 df_attributes.index = df_attributes["gauge_id"]
 df = df_mean.join(df_attributes, on='gauge_id')
 
-
+"""
 # calculate annual averages
 years = ['1981', '1982', '1983', '1984', '1985', '1986', '1987', '1988', '1989', '1990']
 for year in years:
@@ -100,7 +100,7 @@ for decade in decades:
 
 
 # todo: select only relevant attributes
-
+"""
 
 # plot standard Budyko plot
 fig = plt.figure(figsize=(4, 3), constrained_layout=True)
