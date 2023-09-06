@@ -19,6 +19,8 @@ results_path = "results/"
 if not os.path.isdir(results_path):
     os.makedirs(results_path)
 
+data_path = "D:/Data/ERA5/"
+
 def aggregate_era5(data_path, var):
     file_path = data_path + var + "/data.nc"
     ds = xr.open_dataset(file_path)
@@ -51,8 +53,10 @@ def save_as_geotif(data_path, var):
     del ds_var
     print("finished geotif", var)
 
-data_path = "D:/Data/ERA5/"
+save_as_geotif(data_path, "p")
+
 var_list = ["p", "pet", "aet", "rs", "rl", "lh"]
+
 
 # aggregate datasets
 #for var in var_list:

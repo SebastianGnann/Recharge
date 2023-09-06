@@ -62,7 +62,7 @@ df = gdf.join(closest, rsuffix='domains') # merge the datasets by index (for thi
 print("Finished MiguezMacho.")
 
 # plot standard Budyko plot
-fig = plt.figure(figsize=(6, 4), constrained_layout=True)
+fig = plt.figure(figsize=(7, 4), constrained_layout=True)
 axes = plt.axes()
 # ticks
 im = axes.scatter(df["aridity_netrad_gswp3"], (df["ET"]*365/df["pr_gswp3"]), s=2.5, c="grey", alpha=0.1, lw=0)
@@ -80,7 +80,7 @@ axes.set_ylabel("Flux / P [-]")
 axes.set_xlim([0.2, 10])
 #axes.set_xlim([0, 5])
 axes.set_ylim([-0.1, 1.5])
-axes.legend(loc='center right', bbox_to_anchor=(1.35, 0.5))
+axes.legend(loc='center right', bbox_to_anchor=(1.4, 0.5))
 axes.set_xscale('log')
 plotting_fcts.plot_grid(axes)
 fig.savefig(figures_path + "MiguezMacho_" + name + ".png", dpi=600, bbox_inches='tight')
@@ -88,7 +88,7 @@ plt.close()
 
 
 # plot ET as function of aridity
-fig = plt.figure(figsize=(6, 4), constrained_layout=True)
+fig = plt.figure(figsize=(7, 4), constrained_layout=True)
 axes = plt.axes()
 # ticks
 im = axes.scatter(df["aridity_netrad_gswp3"], (df["ET"]*365), s=2.5, c="grey", alpha=0.1, lw=0)
@@ -106,7 +106,7 @@ axes.set_ylabel("Flux [-]")
 axes.set_xlim([0.2, 10])
 #axes.set_xlim([0, 5])
 axes.set_ylim([-0.1, 1500])
-axes.legend(loc='center right', bbox_to_anchor=(1.35, 0.5))
+axes.legend(loc='center right', bbox_to_anchor=(1.4, 0.5))
 axes.set_xscale('log')
 plotting_fcts.plot_grid(axes)
 fig.savefig(figures_path + "MiguezMacho_ET_" + name + ".png", dpi=600, bbox_inches='tight')
