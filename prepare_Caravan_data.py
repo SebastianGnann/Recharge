@@ -2,13 +2,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import os
-from scipy import stats
-import seaborn as sns
-from functions import plotting_fcts
-import geopandas as gpd
-from shapely.geometry import Point
-import rasterio as rio
-from pingouin import partial_corr
 
 # This script loads and analyses Caravan data.
 
@@ -24,7 +17,7 @@ if not os.path.isdir(figures_path):
     os.makedirs(figures_path)
 
 # camels datasets
-camels_list = ["camels", "camelsaus", "camelsbr", "camelscl", "camelsgb", "lamah"]#, "hysets"] #
+camels_list = [ "camels", "camelsaus", "camelsbr", "camelscl", "camelsgb", "lamah", "hysets"] #
 #camels_list = ["camels"]
 
 # load attributes
@@ -74,9 +67,10 @@ df_mean["aridity_netrad"] = df_mean["netrad"]/df_mean["total_precipitation_sum"]
 df_mean["aridity_pet"] = df_mean["potential_evaporation_sum"]/df_mean["total_precipitation_sum"]
 df_mean["runoff_ratio"] = df_mean["streamflow"]/df_mean["total_precipitation_sum"]
 
-df_attributes["aridity_hydroatlas"] = 1/(df_attributes["ari_ix_sav"]/100)
 df_attributes.index = df_attributes["gauge_id"]
 df_signatures.index = df_signatures["gauge_id"]
+
+df_mean["aridity_hydroatlas"] = 1/(df_attributes["ari_ix_sav"]/100)
 
 df = df_mean.join(df_attributes, on='gauge_id')
 df = df_mean.join(df_signatures, on='gauge_id')
