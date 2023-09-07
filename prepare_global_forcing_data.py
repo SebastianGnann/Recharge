@@ -43,6 +43,7 @@ def save_as_geotif(data_path, var):
     ds = xr.open_dataset(file_path)
     ds = ds.sel(time=slice(dt(1981, 1, 1), dt(2020, 12, 31)))
     ds = ds.mean(dim='time')
+    #ds["tp"] = ds["tp"]*1000*365 # convert to mm/yr
     ds_var = ds['tp']
     ds_var.coords['longitude'] = (ds_var.coords['longitude'] + 180) % 360 - 180
     ds_var = ds_var.sortby(ds_var.longitude)
