@@ -61,7 +61,7 @@ df = gdf.join(closest, rsuffix='domains') # merge the datasets by index (for thi
 
 print("Finished MiguezMacho.")
 
-stat = 'median'
+stat = 'mean'
 # plot standard Budyko plot
 fig = plt.figure(figsize=(7, 4), constrained_layout=True)
 axes = plt.axes()
