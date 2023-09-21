@@ -77,6 +77,21 @@ df_MacDonald = ds_combined.to_dataframe()
 df_MacDonald["recharge_ratio"] = df_MacDonald["recharge"]/df_MacDonald["tp"]
 print("Finished MacDonald.")
 
+# Hartmann
+# copied from PNAS SI
+data_path = "C:/Users/gnann/Documents/PYTHON/Recharge/"
+df = pd.read_csv(data_path + "results/recharge_Hartmann_PNAS.csv", sep=';')
+selected_data = []
+for lat, lon in zip(df['Lat'], df['Lon']):
+    data_point = ds_ERA5.sel(latitude=lat, longitude=lon, method='nearest')#['tp']#.values()
+    data_point["recharge"] = \
+        df.loc[np.logical_and(df["Lat"] == lat, df["Lon"]==lon)]["Recharge"].values[0]
+    selected_data.append(data_point)
+ds_combined = xr.concat(selected_data, dim='time')
+df_Hartmann = ds_combined.to_dataframe()
+df_Hartmann["recharge_ratio"] = df_Hartmann["recharge"]/df_Hartmann["tp"]
+print("Finished Hartmann.")
+
 # Cuthbert
 data_path = "C:/Users/gnann/Documents/PYTHON/Recharge/results/"
 df_Cuthbert = pd.read_csv(data_path + "green-roofs_deep_drainage.csv")
@@ -227,19 +242,22 @@ fig.savefig(figures_path + "Budyko_recharge_shaded_areas_uncertainty.png", dpi=6
 plt.close()
 
 print("Precipitation and recharge")
-fig = plt.figure(figsize=(7, 4), constrained_layout=True)
+fig = plt.figure(figsize=(4, 3.5), constrained_layout=True)
 axes = plt.axes()
-im = axes.scatter(df_Moeck["tp"], df_Moeck["recharge"], s=5, c="#497a21", alpha=0.9, lw=0)
-plotting_fcts.plot_lines_group(df_Moeck["tp"], df_Moeck["recharge"], "#497a21", n=11, label='Moeck', statistic=stat)
-#plotting_fcts.plot_lines_group(df_MacDonald["aridity_netrad"], df_MacDonald["recharge_ratio"], "#7bcb3a", n=6, label='MacDonald', statistic=stat)
+im = axes.scatter(df_Moeck["tp"], df_Moeck["recharge"], s=10, c="burlywood", alpha=0.1, lw=0)
+im = axes.scatter(df_MacDonald["tp"], df_MacDonald["recharge"], s=10, c="olive", alpha=0.9, lw=0)
+im = axes.scatter(df_Hartmann["tp"], df_Hartmann["recharge"], s=10, c="yellowgreen", alpha=0.9, lw=0)
+plotting_fcts.plot_lines_group(df_Moeck["tp"], df_Moeck["recharge"], "burlywood", n=11, label='Moeck', statistic=stat)
+plotting_fcts.plot_lines_group(df_MacDonald["tp"], df_MacDonald["recharge"], "olive", n=6, label='MacDonald', statistic=stat)
+plotting_fcts.plot_lines_group(df_Hartmann["tp"], df_Hartmann["recharge"], "yellowgreen", n=6, label='Hartmann', statistic=stat)
 axes.set_xlabel("P [mm/yr]")
 axes.set_ylabel("Recharge [mm/yr]")
-axes.set_xlim([-100, 3100])
-axes.set_ylim([-100, 2100])
-axes.legend(loc='center right', bbox_to_anchor=(1.4, 0.5))
-axes.axline((0, 0), slope=1, c='silver', label='1:1 line', linestyle='--')
-axes.grid()
-#axes.set_xscale('log')
+axes.set_xlim([0, 2200])
+axes.set_ylim([0.1, 2000])
+axes.legend()
+#axes.axline((0, 0), slope=1, c='silver', label='1:1 line', linestyle='--')
+#axes.grid()
+axes.set_yscale('log')
 #plotting_fcts.plot_grid(axes)
 fig.savefig(figures_path + "precipitation_recharge.png", dpi=600, bbox_inches='tight')
 plt.close()
