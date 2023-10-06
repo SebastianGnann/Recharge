@@ -39,8 +39,7 @@ df_Caravan2 = pd.read_csv("./results/caravan_processed_camels.csv")
 print("Finished Caravan.")
 
 # CAMELS
-data_path = "C:/Users/gnann/Documents/MATLAB/CAMELS_Matlab/"
-df_CAMELS = pd.read_csv(data_path + "CAMELS_table.csv")
+df_CAMELS = pd.read_csv("./results/CAMELS_table.csv")
 print("Finished CAMELS.")
 
 # ERA5
@@ -50,8 +49,7 @@ df_ERA5 = df_ERA5.sample(100000) # to reduce size
 print("Finished ERA5.")
 
 # Moeck
-data_path = "C:/Users/gnann/Documents/PYTHON/GHM_Comparison/"
-df = pd.read_csv(data_path + "data/global_groundwater_recharge_moeck-et-al.csv", sep=',')
+df = pd.read_csv("./results/global_groundwater_recharge_moeck-et-al.csv", sep=',')
 selected_data = []
 for lat, lon in zip(df['Latitude'], df['Longitude']):
     data_point = ds_ERA5.sel(latitude=lat, longitude=lon, method='nearest')#['tp']#.values()
@@ -64,8 +62,7 @@ df_Moeck["recharge_ratio"] = df_Moeck["recharge"]/df_Moeck["tp"]
 print("Finished Moeck.")
 
 # MacDonald
-data_path = "C:/Users/gnann/Documents/PYTHON/GHM_Comparison/"
-df = pd.read_csv(data_path + "data/Recharge_data_Africa_BGS.csv", sep=';')
+df = pd.read_csv("./results/Recharge_data_Africa_BGS.csv", sep=';')
 selected_data = []
 for lat, lon in zip(df['Lat'], df['Long']):
     data_point = ds_ERA5.sel(latitude=lat, longitude=lon, method='nearest')#['tp']#.values()
@@ -79,8 +76,7 @@ print("Finished MacDonald.")
 
 # Hartmann
 # copied from PNAS SI
-data_path = "C:/Users/gnann/Documents/PYTHON/Recharge/"
-df = pd.read_csv(data_path + "results/recharge_Hartmann_PNAS.csv", sep=';')
+df = pd.read_csv("./results/recharge_Hartmann_PNAS.csv", sep=',')
 selected_data = []
 for lat, lon in zip(df['Lat'], df['Lon']):
     data_point = ds_ERA5.sel(latitude=lat, longitude=lon, method='nearest')#['tp']#.values()
@@ -93,8 +89,7 @@ df_Hartmann["recharge_ratio"] = df_Hartmann["recharge"]/df_Hartmann["tp"]
 print("Finished Hartmann.")
 
 # Cuthbert
-data_path = "C:/Users/gnann/Documents/PYTHON/Recharge/results/"
-df_Cuthbert = pd.read_csv(data_path + "green-roofs_deep_drainage.csv")
+df_Cuthbert = pd.read_csv("./results/green-roofs_deep_drainage.csv")
 print("Finished Cuthbert.")
 
 ### plot data ###
