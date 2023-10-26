@@ -63,3 +63,5 @@ fig.savefig(figures_path + "toy_model_all_fluxes_BFI_" + str(BFI) + ".png", dpi=
 plt.close()
 
 print("Finished plotting data.")
+
+# todo: play with functions etc.

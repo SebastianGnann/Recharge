@@ -54,7 +54,7 @@ selected_data = []
 for lat, lon in zip(df['Latitude'], df['Longitude']):
     data_point = ds_ERA5.sel(latitude=lat, longitude=lon, method='nearest')#['tp']#.values()
     data_point["recharge"] = \
-        df.loc[np.logical_and(df["Latitude"] == lat, df["Longitude"]==lon)]["Groundwater recharge [mm/y]"].values[0]
+        df.loc[np.logical_and(df["Latitude"]==lat, df["Longitude"]==lon)]["Groundwater recharge [mm/y]"].values[0]
     selected_data.append(data_point)
 ds_combined = xr.concat(selected_data, dim='time')
 df_Moeck = ds_combined.to_dataframe()
@@ -67,7 +67,7 @@ selected_data = []
 for lat, lon in zip(df['Lat'], df['Long']):
     data_point = ds_ERA5.sel(latitude=lat, longitude=lon, method='nearest')#['tp']#.values()
     data_point["recharge"] = \
-        df.loc[np.logical_and(df["Lat"] == lat, df["Long"]==lon)]["Recharge_mmpa"].values[0]
+        df.loc[np.logical_and(df["Lat"]==lat, df["Long"]==lon)]["Recharge_mmpa"].values[0]
     selected_data.append(data_point)
 ds_combined = xr.concat(selected_data, dim='time')
 df_MacDonald = ds_combined.to_dataframe()
@@ -81,12 +81,27 @@ selected_data = []
 for lat, lon in zip(df['Lat'], df['Lon']):
     data_point = ds_ERA5.sel(latitude=lat, longitude=lon, method='nearest')#['tp']#.values()
     data_point["recharge"] = \
-        df.loc[np.logical_and(df["Lat"] == lat, df["Lon"]==lon)]["Recharge"].values[0]
+        df.loc[np.logical_and(df["Lat"]==lat, df["Lon"]==lon)]["Recharge"].values[0]
     selected_data.append(data_point)
 ds_combined = xr.concat(selected_data, dim='time')
 df_Hartmann = ds_combined.to_dataframe()
 df_Hartmann["recharge_ratio"] = df_Hartmann["recharge"]/df_Hartmann["tp"]
 print("Finished Hartmann.")
+
+# Lee
+# HESS preprint
+#df_Lee2 = pd.read_csv("./results/dat07_u.csv", sep=',')
+df = pd.read_csv("./results/dat07_u.csv", sep=',')
+selected_data = []
+for lat, lon in zip(df['lat'], df['lon']):
+    data_point = ds_ERA5.sel(latitude=lat, longitude=lon, method='nearest')#['tp']#.values()
+    data_point["recharge"] = \
+        df.loc[np.logical_and(df["lat"]==lat, df["lon"]==lon)]["Recharge mean mm/y"].values[0]
+    selected_data.append(data_point)
+ds_combined = xr.concat(selected_data, dim='time')
+df_Lee = ds_combined.to_dataframe()
+df_Lee["recharge_ratio"] = df_Lee["recharge"]/df_Lee["tp"]
+print("Finished Lee.")
 
 # Cuthbert
 df_Cuthbert = pd.read_csv("./results/green-roofs_deep_drainage.csv")
@@ -158,9 +173,11 @@ fig = plt.figure(figsize=(7, 4), constrained_layout=True)
 axes = plt.axes()
 im = axes.scatter(df_Moeck["aridity_netrad"], df_Moeck["recharge_ratio"], s=2.5, c="#497a21", alpha=0.25, lw=0)
 im = axes.scatter(df_MacDonald["aridity_netrad"], df_MacDonald["recharge_ratio"], s=2.5, c="#7bcb3a", alpha=0.25, lw=0)
+im = axes.scatter(df_Lee["aridity_netrad"], df_Lee["recharge_ratio"], s=2.5, c="tab:purple", alpha=0.25, lw=0)
 plotting_fcts.plot_lines_group(df_Moeck["aridity_netrad"], df_Moeck["recharge_ratio"], "#497a21", n=11, label='Moeck', statistic=stat)
 plotting_fcts.plot_lines_group(df_MacDonald["aridity_netrad"], df_MacDonald["recharge_ratio"], "#7bcb3a", n=6, label='MacDonald', statistic=stat)
 plotting_fcts.plot_lines_group(df_Cuthbert["PET"]/df_Cuthbert["P"], df_Cuthbert["D(=P-AET)"]/df_Cuthbert["P"], "#A496CF", n=11, label='D/P Cuthbert', statistic=stat)
+plotting_fcts.plot_lines_group(df_Lee["aridity_netrad"], df_Lee["recharge_ratio"], "tab:purple", n=11, label='Lee', statistic=stat)
 m = axes.plot(np.linspace(0.1,10,100), Berghuijs_recharge_curve(np.linspace(0.1,10,100)), "--", c="black", alpha=0.75)
 im = axes.plot(np.linspace(0.1,10,100), Berghuijs_recharge_curve(np.linspace(0.1,10,100)), "--", c="#b2df8a", alpha=0.75, label="Berghuijs")
 axes.set_xlabel("PET / P [-]")
@@ -226,6 +243,7 @@ im = axes.plot(np.linspace(0.1,10,1000), Berghuijs_recharge_curve(np.linspace(0.
 plotting_fcts.plot_lines_group(df_Caravan["aridity_netrad"], df_Caravan["BFI"]*df_Caravan["TotalRR"], "#1f78b4", n=11, label='Qb Caravan', statistic=stat, uncertainty=True)
 plotting_fcts.plot_lines_group(df_Moeck["aridity_netrad"], df_Moeck["recharge_ratio"], "#497a21", n=11, label='Moeck', statistic=stat, uncertainty=True)
 plotting_fcts.plot_lines_group(df_MacDonald["aridity_netrad"], df_MacDonald["recharge_ratio"], "#7bcb3a", n=6, label='MacDonald', statistic=stat, uncertainty=True)
+plotting_fcts.plot_lines_group(df_Lee["aridity_netrad"], df_Lee["recharge_ratio"], "tab:purple", n=6, label='Lee', statistic=stat, uncertainty=True)
 axes.set_xlabel("PET / P [-]")
 axes.set_ylabel("Flux / P [-]")
 axes.set_xlim([0.2, 5])
