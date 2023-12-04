@@ -33,7 +33,7 @@ def plot_lines_group(x, y, color, n=11, label='', statistic='mean', uncertainty=
     # calculate binned statistics
     bin_edges, \
     mean_stat, std_stat, median_stat, \
-    p_05_stat, p_25_stat, p_75_stat, p_95_stat, \
+    p_05_stat, p_25_stat, p_75_stat, p_95_stat, min_stat, max_stat, \
     asymmetric_error, bin_median = get_binned_stats(x, y, n)
 
     ax = plt.gca()
@@ -77,14 +77,28 @@ def get_binned_stats(x, y, n=11):
     p_25_stat = stats.binned_statistic(x, y, statistic=lambda y: np.nanquantile(y, .25), bins=bin_edges)
     p_75_stat = stats.binned_statistic(x, y, statistic=lambda y: np.nanquantile(y, .75), bins=bin_edges)
     p_95_stat = stats.binned_statistic(x, y, statistic=lambda y: np.nanquantile(y, .95), bins=bin_edges)
+    min_stat = stats.binned_statistic(x, y, statistic=lambda y: np.nanmin(y), bins=bin_edges)
+    max_stat = stats.binned_statistic(x, y, statistic=lambda y: np.nanmax(y), bins=bin_edges)
     asymmetric_error = [median_stat.statistic - p_25_stat.statistic, p_75_stat.statistic - median_stat.statistic]
     bin_median = stats.mstats.mquantiles(x, np.linspace(0.05, 0.95, len(bin_edges)-1))
     #bin_median = np.linspace(125, 2375, 10)
 
     return bin_edges, \
            mean_stat, std_stat, median_stat, \
-           p_05_stat, p_25_stat, p_75_stat, p_95_stat, \
+           p_05_stat, p_25_stat, p_75_stat, p_95_stat, min_stat, max_stat, \
            asymmetric_error, bin_median
+
+
+def get_binned_range(x, y, bin_edges):
+
+    # calculate binned statistics
+    min_stat = stats.binned_statistic(x, y, statistic=lambda y: np.nanmin(y), bins=bin_edges)
+    max_stat = stats.binned_statistic(x, y, statistic=lambda y: np.nanmax(y), bins=bin_edges)
+    median_stat = stats.binned_statistic(x, y, statistic=np.nanmedian, bins=bin_edges)
+    mean_stat = stats.binned_statistic(x, y, statistic=lambda y: np.nanmean(y), bins=bin_edges)
+    bin_median = bin_edges[1:] - (bin_edges [0]+bin_edges[1])/2
+
+    return min_stat, max_stat, median_stat, mean_stat, bin_median
 
 
 def plot_grid(axes):
@@ -119,7 +133,7 @@ def plot_bins_group(x, y, color="tab:blue", group_type="aridity_class", group="e
     # calculate binned statistics
     bin_edges, \
     mean_stat, std_stat, median_stat, \
-    p_05_stat, p_25_stat, p_75_stat, p_95_stat, \
+    p_05_stat, p_25_stat, p_75_stat, p_95_stat, min_stat, max_stat, \
     asymmetric_error, bin_median = get_binned_stats(df_group[x], df_group[y])
 
     ax = plt.gca()

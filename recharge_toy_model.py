@@ -6,6 +6,7 @@ from functions import get_nearest_neighbour, plotting_fcts
 import geopandas as gpd
 import xarray as xr
 import rasterio as rio
+from scipy.stats import lognorm
 
 # This script loads and analyses different datasets in Budyko space.
 
@@ -114,7 +115,8 @@ plt.close()
 
 print("Finished plotting data.")
 
-from scipy.stats import lognorm
+
+
 # todo: play with functions etc.
 n=10000
 #AI = np.linspace(0.1,10,100)
@@ -132,8 +134,8 @@ R_P = Berghuijs_recharge_curve(AI)
 #R_P = R/P
 #R[R>Smax] = Smax[R>Smax]
 #R_P = R/P
-#dist=lognorm([0.75],loc=0.1)
-#R_P = dist.pdf(AI)
+dist=lognorm([0.75],loc=0.1)
+R_P = dist.pdf(AI)
 Q_P = 1-Budyko_curve(AI)
 E_P = Budyko_curve(AI)
 BFI = np.random.rand(n) # random fraction
@@ -180,3 +182,25 @@ print(str(BFI[np.logical_and(wb_ok,AI<0.5)].mean()))
 
 print("Finished plotting data.")
 
+
+# old fitting code
+
+from scipy.optimize import curve_fit
+from scipy.stats import gamma
+
+df = pd.DataFrame()
+# Define the lognormal probability density function (pdf)
+def lognormal_pdf(x, mu, sigma):
+    return 1/(x * sigma * np.sqrt(2 * np.pi)) * np.exp(-((np.log(x) - mu)**2) / (2 * sigma**2))
+
+# Define the gamma probability density function (pdf)
+def gamma_pdf(x, shape, scale):
+    return gamma.pdf(x, a=shape, scale=scale)
+
+# Fit the  distribution to the data using curve_fit
+params, covariance = curve_fit(gamma_pdf, df["aridity_netrad"].dropna(), df["recharge_ratio"].dropna())
+#params, covariance = curve_fit(gamma_pdf, bin_median, median_stat.statistic)
+
+# Extract the parameters
+#mu_fit, sigma_fit = params
+shape_fit, scale_fit = params
