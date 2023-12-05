@@ -39,7 +39,13 @@ df_Caravan2 = pd.read_csv("./results/caravan_processed_camels.csv")
 print("Finished Caravan.")
 
 # CAMELS
-df_CAMELS = pd.read_csv("./results/CAMELS_table.csv")
+US_attributes_path = "D:/Data/CAMELS_US/camels_attributes_v2.0/camels_attributes_v2.0/"
+attributes_list = ["clim","geol","hydro","soil","topo","vege"]
+df_attributes = pd.read_csv(US_attributes_path + "camels_" + "name" + ".txt", sep=';')
+for attribute in attributes_list:
+    df_attributes_tmp = pd.read_csv(US_attributes_path + "camels_" + attribute + ".txt", sep=';')
+    df_attributes = pd.merge(df_attributes,df_attributes_tmp)
+df_CAMELS = df_attributes[df_attributes["frac_snow"]<0.2]
 print("Finished CAMELS.")
 
 # ERA5
@@ -121,8 +127,8 @@ plotting_fcts.plot_lines_group(df_ERA5["aridity_netrad"], df_ERA5["e"]/df_ERA5["
 #plotting_fcts.plot_lines_group(df_Caravan["aridity_netrad"], df_Caravan["BFI"]*df_Caravan["TotalRR"], "#1f78b4", n=11, label='Qb Caravan', statistic=stat)
 #plotting_fcts.plot_lines_group(df_Caravan["aridity_netrad"], 1-(1-df_Caravan["BFI"])*df_Caravan["TotalRR"], "#93c47d", n=11, label='P-Qf Caravan', statistic=stat)
 plotting_fcts.plot_lines_group(df_CAMELS["aridity"], df_CAMELS["runoff_ratio"], "#a6cee3", n=11, label='Q CAMELS US', statistic=stat)
-plotting_fcts.plot_lines_group(df_CAMELS["aridity"], df_CAMELS["BFI"]*df_CAMELS["runoff_ratio"], "#1f78b4", n=11, label='Qb CAMELS US', statistic=stat)
-plotting_fcts.plot_lines_group(df_CAMELS["aridity"], 1-(1-df_CAMELS["BFI"])*df_CAMELS["runoff_ratio"], "#93c47d", n=11, label='P-Qf CAMELS US', statistic=stat)
+plotting_fcts.plot_lines_group(df_CAMELS["aridity"], df_CAMELS["baseflow_index"]*df_CAMELS["runoff_ratio"], "#1f78b4", n=11, label='Qb CAMELS US', statistic=stat)
+plotting_fcts.plot_lines_group(df_CAMELS["aridity"], 1-(1-df_CAMELS["baseflow_index"])*df_CAMELS["runoff_ratio"], "#93c47d", n=11, label='P-Qf CAMELS US', statistic=stat)
 plotting_fcts.plot_lines_group(df_Lee["aridity_netrad"], df_Lee["recharge_ratio"], "#977173", n=11, label='Lee', statistic=stat)
 plotting_fcts.plot_lines_group(df_Moeck["aridity_netrad"], df_Moeck["recharge_ratio"], "#a86487", n=11, label='Moeck', statistic=stat)
 plotting_fcts.plot_lines_group(df_MacDonald["aridity_netrad"], df_MacDonald["recharge_ratio"], "#704b5b", n=6, label='MacDonald', statistic=stat)
@@ -188,10 +194,11 @@ axes.fill_between(np.linspace(0.1,10,1000),1-Budyko_curve(np.linspace(0.1,10,100
 im = axes.plot(np.linspace(0.1,10,1000), Berghuijs_recharge_curve(np.linspace(0.1,10,1000)), "-", c="grey", alpha=0.75, label='Berghuijs')
 #plotting_fcts.plot_lines_group(df_ERA5["aridity_netrad"], df_ERA5["e"]/df_ERA5["tp"], "#CEA97C", n=11, label='ET ERA5', statistic=stat)
 #plotting_fcts.plot_lines_group(df_Caravan["aridity_netrad"], df_Caravan["TotalRR"], "#a6cee3", n=11, label='Qtot', statistic=stat)
-plotting_fcts.plot_lines_group(df_CAMELS["aridity"], df_CAMELS["BFI"]*df_CAMELS["runoff_ratio"], "#1f78b4", n=11, label='Qb CAMELS US', statistic=stat)
+plotting_fcts.plot_lines_group(df_CAMELS["aridity"], df_CAMELS["baseflow_index"]*df_CAMELS["runoff_ratio"], "#1f78b4", n=11, label='Qb CAMELS US', statistic=stat)
 plotting_fcts.plot_lines_group(df_Moeck["aridity_netrad"], df_Moeck["recharge_ratio"], "#a86487", n=11, label='Moeck', statistic=stat)
 plotting_fcts.plot_lines_group(df_MacDonald["aridity_netrad"], df_MacDonald["recharge_ratio"], "#704b5b", n=6, label='MacDonald', statistic=stat)
 plotting_fcts.plot_lines_group(df_Lee["aridity_netrad"], df_Lee["recharge_ratio"], "#977173", n=11, label='Lee', statistic=stat)
+#plotting_fcts.plot_lines_group(df_Hartmann["aridity_netrad"], df_Hartmann["recharge_ratio"], "#e8cbe0", n=6, label='Hartmann', statistic=stat)
 axes.set_xlabel("PET / P [-]")
 axes.set_ylabel("Flux / P [-]")
 axes.set_xlim([0.2, 5])
@@ -210,10 +217,11 @@ axes.fill_between(np.linspace(0.1,10,1000),1-Budyko_curve(np.linspace(0.1,10,100
 im = axes.plot(np.linspace(0.1,10,1000), Berghuijs_recharge_curve(np.linspace(0.1,10,1000)), "-", c="grey", alpha=0.75, label='Berghuijs')
 #plotting_fcts.plot_lines_group(df_ERA5["aridity_netrad"], df_ERA5["e"]/df_ERA5["tp"], "#CEA97C", n=11, label='ET ERA5', statistic=stat)
 #plotting_fcts.plot_lines_group(df_Caravan["aridity_netrad"], df_Caravan["TotalRR"], "#a6cee3", n=11, label='Qtot', statistic=stat)
-plotting_fcts.plot_lines_group(df_CAMELS["aridity"], df_CAMELS["BFI"]*df_CAMELS["runoff_ratio"], "#1f78b4", n=11, label='Qb CAMELS US', statistic=stat, uncertainty=True)
+plotting_fcts.plot_lines_group(df_CAMELS["aridity"], df_CAMELS["baseflow_index"]*df_CAMELS["runoff_ratio"], "#1f78b4", n=11, label='Qb CAMELS US', statistic=stat, uncertainty=True)
 plotting_fcts.plot_lines_group(df_Moeck["aridity_netrad"], df_Moeck["recharge_ratio"], "#a86487", n=11, label='Moeck', statistic=stat, uncertainty=True)
 plotting_fcts.plot_lines_group(df_MacDonald["aridity_netrad"], df_MacDonald["recharge_ratio"], "#704b5b", n=6, label='MacDonald', statistic=stat, uncertainty=True)
 plotting_fcts.plot_lines_group(df_Lee["aridity_netrad"], df_Lee["recharge_ratio"], "#977173", n=6, label='Lee', statistic=stat, uncertainty=True)
+#plotting_fcts.plot_lines_group(df_Hartmann["aridity_netrad"], df_Hartmann["recharge_ratio"], "#e8cbe0", n=6, label='Hartmann', statistic=stat, uncertainty=True)
 axes.set_xlabel("PET / P [-]")
 axes.set_ylabel("Flux / P [-]")
 axes.set_xlim([0.2, 5])
