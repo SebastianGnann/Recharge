@@ -175,3 +175,6 @@ plotting_fcts.plot_grid(axes)
 #axes.set_title('x')
 fig.savefig(figures_path + "toy_model_all_fluxes_areas_ET.png", dpi=600, bbox_inches='tight')
 plt.close()
+
+
+# todo: calculate global fluxes using different relationships
