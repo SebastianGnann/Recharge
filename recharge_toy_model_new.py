@@ -178,3 +178,49 @@ plt.close()
 
 
 # todo: calculate global fluxes using different relationships
+
+# forcing grid
+df_ERA5 = pd.read_csv(results_path + "ERA5_aggregated.csv")
+
+# account for grid cell size
+df_area = []
+# loop over lat,lon
+for x, y in zip(df_ERA5["longitude"], df_ERA5["latitude"]):
+    # https://gis.stackexchange.com/questions/421231/how-can-i-calculate-the-area-of-a-5-arcminute-grid-cell-in-square-kilometers-gi
+    # 1 degree of latitude = 111.567km. This varies very slightly by latitude, but we'll ignore that
+    # 5 arcminutes of latitude is 1/12 of that, so 9.297km
+    # 5 arcminutes of longitude is similar, but multiplied by cos(latitude) if latitude is in radians, or cos(latitude/360 * 2 * 3.14159) if in degrees
+    # we have half a degree here
+    y_len = 111.567/10 # 0.1 degrees /12#60/2
+    x_len = y_len * np.cos(y / 360 * 2 * np.pi)
+    df_area.append([x_len, y_len])
+df_area = pd.DataFrame(df_area)
+df_area["area"] = df_area[0] * df_area[1]
+print("Total land area: ", str(df_area["area"].sum()))
+
+df_ERA5["area"] = df_area["area"]
+
+df_ERA5.loc[df_ERA5["aridity_netrad"]<0,"aridity_netrad"] = np.nan
+df_ERA5.loc[df_ERA5["aridity_netrad"]<1,"aridity_netrad"] = np.nan # as in Berghuijs paper
+
+# todo: remove greenland and antarctica
+df_ERA5.loc[df_ERA5["latitude"]<-60,"area"] = np.nan
+#df_greenland = pd.read_csv(data_path + "greenland.csv", sep=',') # greenland mask for plot
+
+# calculate fluxes
+df_ERA5["Q"] = (1-Budyko_curve(df_ERA5["aridity_netrad"]))*df_ERA5["tp"]
+df_ERA5["E"] = (Budyko_curve(df_ERA5["aridity_netrad"]))*df_ERA5["tp"]
+df_ERA5["R"] = (Berghuijs_recharge_curve(df_ERA5["aridity_netrad"]))*df_ERA5["tp"]
+
+# todo: add baseflow etc
+
+# todo: plot maps
+
+
+# calculate global averages
+P_mean = (df_ERA5["tp"]*df_ERA5["area"]).sum()/df_ERA5["area"].sum()
+netrad_mean = (df_ERA5["netrad"]*df_ERA5["area"]).sum()/df_ERA5["area"].sum()
+Q_mean = (df_ERA5["Q"]*df_ERA5["area"]).sum()/df_ERA5["area"].sum()
+E_mean = (df_ERA5["E"]*df_ERA5["area"]).sum()/df_ERA5["area"].sum()
+R_mean = (df_ERA5["R"]*df_ERA5["area"]).sum()/df_ERA5["area"].sum()
+
