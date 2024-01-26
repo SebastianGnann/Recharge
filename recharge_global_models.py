@@ -69,14 +69,14 @@ for model in models:
     df_tmp = df[df["ghm"]==model]
 
     stat = "median"
-    a = 0.05
+    a = 0.025
 
     fig = plt.figure(figsize=(7, 4), constrained_layout=True)
     axes = plt.axes()
-    axes.plot(df_tmp["aridity_netrad"], df_tmp["qsb"]/df_tmp["pr"], ".", markersize=2, c="#073763", alpha=a)
-    axes.plot(df_tmp["aridity_netrad"], df_tmp["qtot"]/df_tmp["pr"], ".", markersize=2, c="#0b5394", alpha=a)
-    axes.plot(df_tmp["aridity_netrad"], df_tmp["evap"]/df_tmp["pr"], ".", markersize=2, c="#38761D", alpha=a)
-    axes.plot(df_tmp["aridity_netrad"], df_tmp["qr"]/df_tmp["pr"], ".", markersize=2, c="grey", alpha=a)
+    axes.plot(df_tmp["aridity_netrad"], df_tmp["qsb"]/df_tmp["pr"], ".", markersize=1, c="#073763", alpha=a)
+    axes.plot(df_tmp["aridity_netrad"], df_tmp["qtot"]/df_tmp["pr"], ".", markersize=1, c="#0b5394", alpha=a)
+    axes.plot(df_tmp["aridity_netrad"], df_tmp["evap"]/df_tmp["pr"], ".", markersize=1, c="#38761D", alpha=a)
+    axes.plot(df_tmp["aridity_netrad"], df_tmp["qr"]/df_tmp["pr"], ".", markersize=1, c="grey", alpha=a)
     plotting_fcts.plot_lines_group(df_tmp["aridity_netrad"], df_tmp["qsb"]/df_tmp["pr"], "#073763", n=11, label='Qb', statistic=stat, uncertainty=False)
     plotting_fcts.plot_lines_group(df_tmp["aridity_netrad"], df_tmp["qtot"]/df_tmp["pr"], "#0b5394", n=11, label='Q', statistic=stat, uncertainty=False)
     plotting_fcts.plot_lines_group(df_tmp["aridity_netrad"], df_tmp["evap"]/df_tmp["pr"], "#38761D", n=11, label='E', statistic=stat, uncertainty=False)

@@ -177,6 +177,11 @@ fig.savefig(figures_path + "toy_model_all_fluxes_areas_ET.png", dpi=600, bbox_in
 plt.close()
 
 
+# add human abstractions
+
+# remove 10% of P for irrigation
+I = P*0.1
+
 # todo: calculate global fluxes using different relationships
 
 # forcing grid
@@ -201,7 +206,7 @@ print("Total land area: ", str(df_area["area"].sum()))
 df_ERA5["area"] = df_area["area"]
 
 df_ERA5.loc[df_ERA5["aridity_netrad"]<0,"aridity_netrad"] = np.nan
-df_ERA5.loc[df_ERA5["aridity_netrad"]<1,"aridity_netrad"] = np.nan # as in Berghuijs paper
+#df_ERA5.loc[df_ERA5["aridity_netrad"]<0.8,"aridity_netrad"] = np.nan # as in Berghuijs paper
 
 # todo: remove greenland and antarctica
 df_ERA5.loc[df_ERA5["latitude"]<-60,"area"] = np.nan
@@ -215,7 +220,6 @@ df_ERA5["R"] = (Berghuijs_recharge_curve(df_ERA5["aridity_netrad"]))*df_ERA5["tp
 # todo: add baseflow etc
 
 # todo: plot maps
-
 
 # calculate global averages
 P_mean = (df_ERA5["tp"]*df_ERA5["area"]).sum()/df_ERA5["area"].sum()
