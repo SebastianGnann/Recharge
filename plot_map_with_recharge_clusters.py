@@ -7,6 +7,7 @@ from datetime import datetime as dt
 import matplotlib.pyplot as plt
 import matplotlib.colors as ml_colors
 import cartopy.crs as ccrs
+import cartopy
 import shapely.geometry as sgeom
 from brewer2mpl import brewer2mpl
 import matplotlib.ticker as mticker
@@ -238,4 +239,34 @@ plt.gca().outline_patch.set_visible(False)
 #gl.ylocator = mticker.FixedLocator([-60, -30, 0, 30, 60])
 #cbar.set_ticks(np.linspace(1, 9, 9))
 fig.savefig(figures_path + "recharge_clusters_" + str(cat) + ".png", dpi=600, bbox_inches='tight')
+plt.close()
+
+# plot map with locations
+
+# plot data
+o = brewer2mpl.get_map("Spectral", "Diverging", 9, reverse=True) # prepare colour map
+c = o.mpl_colormap
+plt.rcParams['axes.linewidth'] = 0.1
+fig = plt.figure()
+ax = plt.axes(projection=ccrs.Robinson(), frameon=False)
+ax.set_global()
+customnorm = ml_colors.BoundaryNorm(boundaries=np.linspace(0.5,9.5,10), ncolors=256)
+sc = ax.scatter(df_Recharge.loc[df_Recharge["source"] == "Moeck", "longitude"], df_Recharge.loc[df_Recharge["source"] == "Moeck", "latitude"],
+                cmap=c, s=2.5, marker="o", alpha=0.75, edgecolors='none',
+                norm=customnorm, transform=ccrs.PlateCarree()) #c=df_Recharge.loc[df_Recharge["source"] == "Moeck", "recharge_ratio"],
+ax.coastlines(linewidth=0.5)
+ax.add_feature(cartopy.feature.LAND, facecolor='gainsboro')
+box = sgeom.box(minx=180, maxx=-180, miny=90, maxy=-60)
+x0, y0, x1, y1 = box.bounds
+ax.set_extent([x0, x1, y0, y1], ccrs.PlateCarree())
+#cbar = plt.colorbar(sc, orientation='horizontal', pad=0.01, shrink=.5)
+#cbar.set_label("Recharge category")
+# cbar.set_ticks([-100,-50,-10,-1,0,1,10,50,100])
+#cbar.ax.tick_params(labelsize=12)
+#plt.gca().outline_patch.set_visible(False)
+#gl = ax.gridlines(draw_labels=False, linewidth=0.5, color='grey', alpha=0.75, linestyle='-')
+#gl.xlocator = mticker.FixedLocator([-120, -60, 0, 60, 120])
+#gl.ylocator = mticker.FixedLocator([-60, -30, 0, 30, 60])
+#cbar.set_ticks(np.linspace(1, 9, 9))
+fig.savefig(figures_path + "recharge_map.png", dpi=600, bbox_inches='tight')
 plt.close()

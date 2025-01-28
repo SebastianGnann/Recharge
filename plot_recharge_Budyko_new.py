@@ -178,7 +178,7 @@ axes.fill_between(np.linspace(0.1,10,1000),1-Budyko_curve(np.linspace(0.1,10,100
 #im = axes.scatter(df_MacDonald["aridity_netrad"], df_MacDonald["recharge_ratio"], s=2.5, c="black", alpha=0.5, lw=0)
 #plotting_fcts.plot_lines_group(df_Caravan["aridity_netrad"], df_Caravan["BFI"]*df_Caravan["TotalRR"], "#073763", n=11, label='Qb Caravan', statistic=stat)
 #plotting_fcts.plot_lines_group(df_Lee["aridity_netrad"], df_Lee["recharge_ratio"], "darkgrey", n=11, label='Lee', statistic=stat, uncertainty=False)
-plotting_fcts.plot_lines_group(df_Moeck["aridity_netrad"], df_Moeck["recharge_ratio"], "dimgrey", n=11, label='Moeck', statistic=stat, uncertainty=False)
+#plotting_fcts.plot_lines_group(df_Moeck["aridity_netrad"], df_Moeck["recharge_ratio"], "dimgrey", n=11, label='Moeck', statistic=stat, uncertainty=False)
 #plotting_fcts.plot_lines_group(df_MacDonald["aridity_netrad"], df_MacDonald["recharge_ratio"], "black", n=11, label='MacDonald', statistic=stat, uncertainty=False)
 #im = axes.plot(np.linspace(0.1,10,1000), Berghuijs_recharge_curve(np.linspace(0.1,10,1000)), "-", c="grey", alpha=0.75, label='Berghuijs')
 axes.set_xlabel("PET / P [-]")
@@ -188,7 +188,7 @@ axes.set_ylim([-0.1, 1.1])
 axes.legend(loc='center right', bbox_to_anchor=(1.4, 0.5))
 axes.set_xscale('log')
 plotting_fcts.plot_grid(axes)
-fig.savefig(figures_path + "Budyko_recharge_alt2.png", dpi=600, bbox_inches='tight')
+fig.savefig(figures_path + "Budyko_recharge_alt4.png", dpi=600, bbox_inches='tight')
 plt.close()
 
 print("Budyko standard")
@@ -259,3 +259,5 @@ plt.close()
 
 
 print("Finished plotting data.")
+
+

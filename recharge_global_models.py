@@ -64,12 +64,37 @@ print("Finished loading data.")
 
 ### define functions ###
 
+fig = plt.figure(figsize=(6, 4), constrained_layout=True)
+axes = plt.axes()
+models = ["cwatm", "jules-w1", "pcr-globwb", "watergap2"]
+#models = ["clm45", "cwatm", "h08", "jules-w1", "lpjml", "matsiro", "pcr-globwb", "watergap2"]
+stat = "median"
+a = 1  # 0.025
+for model in models:
+    df_tmp = df[df["ghm"]==model]
+    plotting_fcts.plot_lines_group(df_tmp["aridity_netrad"], df_tmp["evap"]/df_tmp["pr"], "#38761D", n=11, label='E', statistic=stat, uncertainty=False)
+for model in models:
+    df_tmp = df[df["ghm"]==model]
+    plotting_fcts.plot_lines_group(df_tmp["aridity_netrad"], df_tmp["qtot"]/df_tmp["pr"], "#0b5394", n=11, label='Q', statistic=stat, uncertainty=False)
+for model in models:
+    df_tmp = df[df["ghm"]==model]
+    plotting_fcts.plot_lines_group(df_tmp["aridity_netrad"], df_tmp["qr"]/df_tmp["pr"], "grey", n=11, label='Recharge', statistic=stat, uncertainty=False)
+axes.set_xlabel("PET / P [-]")
+axes.set_ylabel("Flux / P [-]")
+axes.set_xlim([0.2, 5])
+axes.set_ylim([-0.1, 1.1])
+#axes.legend(loc='center right', bbox_to_anchor=(1.4, 0.5))
+axes.set_xscale('log')
+plotting_fcts.plot_grid(axes)
+fig.savefig(figures_path + "models/Budyko_recharge_scatter_all.png", dpi=600, bbox_inches='tight')
+plt.close()
+
 models = ["clm45", "cwatm", "h08", "jules-w1", "lpjml", "matsiro", "pcr-globwb", "watergap2"]
 for model in models:
     df_tmp = df[df["ghm"]==model]
 
     stat = "median"
-    a = 0.025
+    a = 1#0.025
 
     fig = plt.figure(figsize=(7, 4), constrained_layout=True)
     axes = plt.axes()
