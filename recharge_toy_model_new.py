@@ -10,6 +10,7 @@ from scipy.stats import lognorm
 from functions.plotting_fcts import get_binned_range
 from scipy.optimize import curve_fit
 from scipy.stats import gamma
+from scipy.stats import loggamma
 from scipy.stats import beta
 from scipy.stats import johnsonsu
 
@@ -64,31 +65,66 @@ df_Moeck = ds_combined.to_dataframe()
 df_Moeck["recharge_ratio"] = df_Moeck["recharge"]/df_Moeck["tp"]
 print("Finished Moeck.")
 
+# Baseflow Budyko Baseflow
+df_BB = pd.read_csv("./results/baseflow_budyko.txt", sep=',')
+
 # additional recharge functions
 def lognormal_pdf(x, mu, sigma, scale):
     return scale*(1/(x * sigma * np.sqrt(2 * np.pi)) * np.exp(-((np.log(x) - mu)**2) / (2 * sigma**2)))
 
 # define the gamma probability density function (pdf)
-def gamma_pdf(x, shape, scale, scale_b):
-    return scale_b*(gamma.pdf(x, a=shape, scale=scale))
+def gamma_pdf(x, shape, scale):
+    return (gamma.pdf(x, a=shape, scale=scale))
+
+def loggamma_pdf(x, shape, loc, scale):
+    return gamma.pdf(x, a=shape, loc=loc, scale=scale)
 
 def johnsonsu_distribution(x, gamma, delta, xi, lam):
     return johnsonsu.pdf(x, a=gamma, b=delta, loc=xi, scale=lam)
 
+def Gabs_function(x, c, k, l):
+    return c * (1 - np.exp(-k * x)) * np.exp(-l * (x - 1))
+
+def alt_recharge_curve(x, alpha, beta, gamma):
+    #alpha = 0.72
+    #beta = 15.11
+    RR = np.exp(-gamma/x)*alpha*(1-(np.log(x**beta+1)/(1+np.log(x**beta+1))))
+    return RR
+
+
 # fit the  distribution to the data using curve_fit
-params, covariance = curve_fit(johnsonsu_distribution, df_Moeck["aridity_netrad"].dropna(), df_Moeck["recharge_ratio"].dropna())
+df_BB["aridity"] = df_BB["PET"]/df_BB["P"]
+df_BB["baseflow_fraction"] = df_BB["Qb"]/df_BB["P"]
+df_Moeck_selected = df_Moeck[["aridity_netrad", "recharge_ratio"]]
+df_BB_selected = df_BB[["aridity", "baseflow_fraction"]]
+df_BB_selected = df_BB_selected.rename(columns={"aridity": "aridity_netrad", "baseflow_fraction": "recharge_ratio"})
+# Concatenate vertically
+df_combined = pd.concat([df_Moeck_selected, df_BB_selected], ignore_index=True).dropna()
+
+#params, covariance = curve_fit(johnsonsu_distribution, df_combined["aridity_netrad"].dropna(), df_combined["recharge_ratio"].dropna())
+params, covariance = curve_fit(alt_recharge_curve, df_combined["aridity_netrad"].dropna(), df_combined["recharge_ratio"].dropna())
+
+def Berghuijs_recharge_curve_alt(aridity):
+    alpha = 0.72
+    beta = 15.11
+    gamma = 0.2
+    RR = np.exp(-gamma/aridity)*alpha*(1-(np.log(aridity**beta+1)/(1+np.log(aridity**beta+1))))
+    return RR
 
 # get ranges for water balance components
-n=1000000
+n=10000000
 P = np.round(np.random.rand(n)*3000)
 P[P==0] = 1e-9
 PET = np.round(np.random.rand(n)*2000)
 AI = PET/P
 R_P = Berghuijs_recharge_curve(AI)
+R_P = Berghuijs_recharge_curve_alt(AI)
 #dist = lognorm([0.7],loc=0.05)
 #R_P = dist.pdf(AI)
 #R_P = gamma.pdf(AI, a=4, scale=0.2)*0.6
-R_P = johnsonsu_distribution(AI, params[0], params[1], params[2], params[3])
+#R_P = johnsonsu_distribution(AI, params[0], params[1], params[2], params[3])
+#R_P = Berghuijs_recharge_curve_nofit(AI, params[0], params[1])
+#R_P = alt_recharge_curve(AI, params[0], params[1], params[2])
 Q_P = 1-Budyko_curve(AI)
 E_P = Budyko_curve(AI)
 BFI = np.random.rand(n) # random fraction
@@ -115,13 +151,39 @@ min_Ef_P, max_Ef_P, median_Ef_P, mean_Ef_P, bin_Ef_P = get_binned_range(AI[wb_ok
 
 a = 0.25
 
+# new plots
+
+# plot 1
+print("Budyko recharge Q")
+fig = plt.figure(figsize=(5, 3), constrained_layout=True)
+axes = plt.axes()
+axes.fill_between(np.linspace(0.1,10,1000), 0*np.linspace(0.1,10,1000), 1-Budyko_curve(np.linspace(0.1,10,1000)), color="#0b5394", alpha=0.1)
+axes.fill_between(np.linspace(0.1,10,1000),1-Budyko_curve(np.linspace(0.1,10,1000)), 1+0*np.linspace(0.1,10,1000), color="#38761D", alpha=0.1)
+axes.fill_between(bin_Qb_P, min_Qb_P.statistic, max_Qb_P.statistic, color="#073763", alpha=a)
+#axes.fill_between(bin_Qf_P, min_Qf_P.statistic, max_Qf_P.statistic, color="#6fa8dc", alpha=a)
+im = axes.plot(AI[wb_ok], R_P[wb_ok], ".", markersize=2, c="dimgrey", label="Recharge")
+im = axes.plot(bin_Qb_P, mean_Qb_P.statistic, "-", markersize=2, c="#073763", label="Q_b") #073763
+#plotting_fcts.plot_lines_group(df_BB["aridity"], df_BB["baseflow_fraction"], "tab:orange", n=11, label='Gnann', statistic='mean')
+#plotting_fcts.plot_lines_group(df_Moeck["aridity_netrad"], df_Moeck["recharge_ratio"], "#a86487", n=11, label='Moeck', statistic='mean')
+axes.set_xlabel("PET / P [-]")
+axes.set_ylabel("Flux / P [-]")
+axes.set_xlim([0.2, 5])
+axes.set_ylim([-0.1, 1.1])
+#axes.legend(loc='center right', bbox_to_anchor=(1.2, 0.5))
+axes.set_xscale('log')
+plotting_fcts.plot_grid(axes)
+#axes.set_title('x')
+fig.savefig(figures_path + "toy_model_new.png", dpi=600, bbox_inches='tight')
+plt.close()
+
+# old plots
 print("Budyko recharge")
 fig = plt.figure(figsize=(7, 4), constrained_layout=True)
 axes = plt.axes()
 im = axes.plot(AI[wb_ok], R_P[wb_ok], ".", markersize=2, c="grey", alpha=a, label="R Johnson")
 im = axes.plot(AI[wb_ok], Berghuijs_recharge_curve(AI[wb_ok]), ".", markersize=2, c="black", alpha=a, label="R Berghuijs")
 im = axes.scatter(df_Moeck["aridity_netrad"], df_Moeck["recharge_ratio"], s=2.5, c="#a86487", alpha=0.25, lw=0)
-plotting_fcts.plot_lines_group(df_Moeck["aridity_netrad"], df_Moeck["recharge_ratio"], "#a86487", n=11, label='Moeck', statistic='median')
+plotting_fcts.plot_lines_group(df_Moeck["aridity_netrad"], df_Moeck["recharge_ratio"], "#a86487", n=11, label='Moeck', statistic='mean')
 axes.set_xlabel("PET / P [-]")
 axes.set_ylabel("Flux / P [-]")
 axes.set_xlim([0.2, 5])
